@@ -15,6 +15,9 @@ class WeatherService {
               date: item.dt_txt,
               imgID: item.weather[0].id,
               desc: item.weather[0].description,
+              feelsLike: item.main.feels_like,
+              humidity: item.main.humidity,
+              windSpeed: item.wind.speed,
             }));
           success({ response, data });
         } else {
