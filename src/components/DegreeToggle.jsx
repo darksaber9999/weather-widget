@@ -1,6 +1,6 @@
 import React from "react";
 
-const DegreeToggle = ({ updateForecastDegree, degreeType }) => {
+const DegreeToggle = ({ updateForecastDegree, updateWindSpeed, degreeType }) => {
 
 
   return (
@@ -27,6 +27,16 @@ const DegreeToggle = ({ updateForecastDegree, degreeType }) => {
           checked={degreeType === "fahrenheit"}
         />
         <label htmlFor="fahrenheit">Fahrenheit</label>
+      </div>
+      <div className="mb-4">
+        <select
+          name="windSpeedType"
+          id="windSpeedType"
+          onChange={updateWindSpeed}
+        >
+          <option value="mph">Miles per Hour (MPH)</option>
+          <option value="kph">Kilometers per Hour (KPH)</option>
+        </select>
       </div>
     </>
   )
