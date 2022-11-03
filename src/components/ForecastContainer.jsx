@@ -7,45 +7,73 @@ const weather = new WeatherService();
 class ForecastContainer extends React.Component {
   state = {
     data: [],
+    city: '',
+    zipCode: '80525',
     loading: false,
     error: false,
     degreeType: "fahrenheit",
     windSpeedType: "mph",
   }
 
-  componentDidMount() {
-    this.setState({ loading: true })
-    weather.fetchFiveDayForecast()
-      .then((res) => {
-        if (res && res.response.ok) {
+  setCityData = () => {
+    const { zipCode } = this.state;
+    if (zipCode.length === 5) {
+      this.setState({
+        loading: true,
+        error: false,
+      });
+      weather.fetchFiveDayForecast(zipCode)
+        .then((res) => {
+          if (res && res.response.ok) {
+            this.setState({
+              data: res.data,
+              city: res.city,
+              loading: false,
+            });
+          } else {
+            this.setState({ loading: false });
+          }
+        }, (error) => {
+          console.log(error);
           this.setState({
-            data: res.data,
-            loading: false
+            loading: false,
+            error: true,
+            data: [],
+            city: 'Invalid City',
           });
-        } else {
-          this.setState({ loading: false });
-        }
-      }, (error) => {
-        console.log(error);
-        this.setState({
-          loading: false,
-          error: true,
         });
-      })
+    }
+  }
+
+  componentDidMount() {
+    this.setCityData();
   }
 
   updateForecastDegree = ({ target: { value } }) => this.setState({ degreeType: value });
 
   updateWindSpeed = ({ target: { name, value } }) => this.setState({ [name]: value });
 
+  updateZipCode = ({ target: { value } }) => this.setState({ zipCode: value });
+
 
   render() {
-    const { loading, error, data, degreeType, windSpeedType } = this.state;
+    const { loading, error, data, degreeType, windSpeedType, city, zipCode } = this.state;
 
     return (
       <div className="container mt-5">
         <h1 className="display-1 jumbotron bg-light py-5 mb-5">5 Day Forecast</h1>
-        <h5 className="text-muted">Loveland, CO US</h5>
+        <h5 className="text-muted">{city}</h5>
+        <div className="zip-input-wrapper">
+          <input
+            type="text"
+            name="zipCode"
+            id="zipCode"
+            maxLength="5"
+            onChange={this.updateZipCode}
+            value={zipCode}
+            onBlur={this.setCityData}
+          />
+        </div>
         <DegreeToggle
           updateForecastDegree={this.updateForecastDegree}
           updateWindSpeed={this.updateWindSpeed}

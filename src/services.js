@@ -1,10 +1,10 @@
-import { WEATHER_API, WEATHER_URL } from "./constants";
+import { WEATHER_API, WEATHER_URL_1, WEATHER_URL_2 } from "./constants";
 
 class WeatherService {
-  async fetchFiveDayForecast() {
+  async fetchFiveDayForecast(zipCode) {
     return new Promise(async (success, failure) => {
       try {
-        const response = await fetch(`${WEATHER_URL}${WEATHER_API}`);
+        const response = await fetch(`${WEATHER_URL_1}${zipCode}${WEATHER_URL_2}${WEATHER_API}`);
         if (response.ok) {
           const json = await response.json();
           const data = json.list
@@ -19,7 +19,8 @@ class WeatherService {
               humidity: item.main.humidity,
               windSpeed: item.wind.speed,
             }));
-          success({ response, data });
+          const city = `${json.city.name}, ${json.city.country}`;
+          success({ response, data, city });
         } else {
           failure({ error: "Invalid http request" })
         }
